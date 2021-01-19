@@ -6,10 +6,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class HelloStsApplication {
+public class HelloSpringBootApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(HelloStsApplication.class, args);
+		SpringApplication.run(HelloSpringBootApplication.class, args);
 	}
 
 	@PostConstruct

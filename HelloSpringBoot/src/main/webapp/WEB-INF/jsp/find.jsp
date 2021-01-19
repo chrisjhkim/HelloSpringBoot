@@ -36,7 +36,7 @@
 	<hr>	
 	<p>검색 by name</p>
 	<form method="post" action="/find">
-		<input type="text" name="name">
+		<input type="text" name="fstr">
 		<input type="submit" value="검색" >
 	</form>
 	<hr>	

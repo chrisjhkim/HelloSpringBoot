@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.chrisjhkim.demo.MyData;
@@ -24,4 +25,6 @@ public interface MyDataRepository extends JpaRepository<MyData, Long>{
 	//ERROR The return type is incompatible with CrudRepository<MyData,Long>.findById(Long)
 	//public MyData findById(Long name);
 
+	@Query("SELECT d FROM MyData d ORDER BY d.name")		// d는 Mydata의 alias 
+	List<MyData> findAllOrderByName();
 }

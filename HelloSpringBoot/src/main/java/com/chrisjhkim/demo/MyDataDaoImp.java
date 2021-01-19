@@ -3,8 +3,10 @@ package com.chrisjhkim.demo;
 import java.util.List;
 
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 import org.springframework.stereotype.Repository;
 
@@ -26,15 +28,29 @@ public class MyDataDaoImp implements MyDataDao<MyData> {
 		this.entityManager = entityManager;
 	}
 
-
 	@Override
-	public List<MyData> getAll() {
-		System.out.println("getAll 1");
+	public List<MyData> getAll(){
+		
+		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<MyData> query = builder.createQuery(MyData.class);
+		Root<MyData> root = query.from(MyData.class);
+		
+		List<MyData> list = null;
+		query.select(root);
+		list = (List<MyData>)entityManager
+				.createQuery(query)
+				.getResultList();
+		return list;
+	}
+	
+	
+	
+	
+	@Override
+	public List<MyData> getAll_JPQL() {
 		Query query = entityManager.createQuery("from MyData");
-		System.out.println("getAll 2");
 		@SuppressWarnings("unchecked")
 		List<MyData> list = query.getResultList();
-		System.out.println("getAll 3");
 		entityManager.close();
 		return list;
 	}
@@ -57,20 +73,29 @@ public class MyDataDaoImp implements MyDataDao<MyData> {
 	}
 
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public List<MyData> find(String fstr) {
+	public List<MyData> find_JPQL(String fstr) {
 		List<MyData> list = null;
 		String qstr = "from MyData where id = :fid or name like :fname or mail like :fmail";
+		//String qstr = "from MyData where id = ?1 or name like ?2 or mail like ?3";
 		Long fid = 0L;
 		try {
 			fid = Long.parseLong(fstr);
 		}catch (NumberFormatException e ) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			System.out.println("fstr not number");
 		}
 		Query query = entityManager.createQuery(qstr)
 				.setParameter("fid", fid)
 				.setParameter("fname",  "%"+fstr+"%")
 				.setParameter("fmail",  fstr+"@%");
+//				.setParameter(1, fid)
+//				.setParameter(2, "%"+fstr+"%")
+//				.setParameter(3, fstr+"@%");
+		
+		
+		
 		list = query.getResultList();
 		return list;
 	}

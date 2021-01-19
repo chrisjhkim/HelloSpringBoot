@@ -117,6 +117,7 @@ public class HelloController {
 			mav.addObject("msg"		,param+"의 검색결과");
 			mav.addObject("value"	,param);
 			List<MyData> list = dao.find(param);
+			System.out.println(list);
 			mav.addObject("datalist", list);
 		}
 		System.out.println();
