@@ -116,7 +116,15 @@
 			<artifactId>mysql-connector-java</artifactId>
 		</dependency>
 		<!-- !DB -->		
-	
+
+		<!-- exchange data with XML -->
+		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.dataformat/jackson-dataformat-xml -->
+		<dependency>
+		    <groupId>com.fasterxml.jackson.dataformat</groupId>
+		    <artifactId>jackson-dataformat-xml</artifactId>
+		    <!-- <version>2.12.1</version> -->
+		</dependency>
+					
 	</dependencies>
 
 	<build>

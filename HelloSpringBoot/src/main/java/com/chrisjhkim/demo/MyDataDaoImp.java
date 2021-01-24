@@ -1,6 +1,7 @@
 package com.chrisjhkim.demo;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -30,15 +31,22 @@ public class MyDataDaoImp implements MyDataDao<MyData> {
 
 	@Override
 	public List<MyData> getAll(){
+		int offset = 1;	//추출 위치 지정
+		int limit = 2;
+		
+		
 		
 		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
 		CriteriaQuery<MyData> query = builder.createQuery(MyData.class);
 		Root<MyData> root = query.from(MyData.class);
 		
 		List<MyData> list = null;
-		query.select(root);
+		query.select(root)
+			.orderBy(builder.asc(root.get("name")));
 		list = (List<MyData>)entityManager
 				.createQuery(query)
+				.setFirstResult(offset)
+				.setMaxResults(limit)
 				.getResultList();
 		return list;
 	}
@@ -62,6 +70,7 @@ public class MyDataDaoImp implements MyDataDao<MyData> {
 				.createQuery("from MyData where id  = " +id)
 				.getSingleResult();
 	}
+	
 
 
 	@SuppressWarnings("unchecked")
@@ -72,7 +81,25 @@ public class MyDataDaoImp implements MyDataDao<MyData> {
 				.getResultList();
 	}
 
+	/*
+	 * Criteria API Style 
+	 */
+	@Override
+	public List<MyData> find(String fstr){
+		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<MyData> query = builder.createQuery(MyData.class);
+		Root<MyData> root = query.from(MyData.class);
+		query.select(root).where(builder.equal(root.get("name"),  fstr));
+		List<MyData> list = null;
+		list = (List<MyData>) entityManager
+				.createQuery(query)
+				.getResultList();
+		return list;
+	}
 
+	/*
+	 * JPQL Style
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<MyData> find_JPQL(String fstr) {

@@ -16,6 +16,7 @@
 <head>
 	<meta http-equiv="Content-Type" 
 		content="text/html; charset=UTF-8">
+	<script src="http://code.jquery.com/jquery.min.js"></script>
 	<style>
 		body{ font-size:13pt; color: gray; margin:5px 25px; }
 		h1{ font-size:18pt; font-weight:bold; color:gray; }
@@ -27,6 +28,31 @@
 		pre{ border:solid 3px #ddd; padding:10px;}
 	</style>	
 	<title>JSP Index Page2</title>
+<script type="text/javascript">
+console.log('console test    0030  ');
+$(document).ready(function(){
+	console.log('ho!');
+	var num = <%= request.getParameter("id") %>
+	console.log('num='+num);
+	$.get("/rest/"+num , null, callback);
+});
+function callback(result){
+	console.log('callback called');
+	console.log('result = '+result);
+	console.log('result.id = '  +result.id);
+	console.log('result.name = '+result.name);
+	console.log('result.mail = '+result.mail);
+	console.log('result.age = ' +result.age);
+	console.log('result.memo = '+result.memo);
+	$('#obj').append('<li>id: '+ result.id + '</li>');
+	$('#obj').append('<li>name: '+ result.name + '</li>');
+	$('#obj').append('<li>mail: '+ result.mail + '</li>');
+	$('#obj').append('<li>age: '+ result.age + '</li>');
+	$('#obj').append('<li>memo: '+ result.memo + '</li>');
+}
+
+	
+</script>
 </head>
 <body>
 	<h1><spring:message code="content.title"></spring:message></h1>
@@ -53,17 +79,21 @@
 
 	<hr>	
 	<p>검색 by name</p>
-	<form method="get" action="/search">
+	<form method="post" action="/find">
 		<input type="text" name="name">
 		<input type="submit" >
 	</form>
+	<hr>	
+	
+	<ol id="obj"></ol>
+	
 	<hr>	
 	<p>val=${val}</p>
 	<form method="post" action="/">
 		<input type="text" name="text1">
 		<input type="submit" >
 	</form>
-	
+
 	
 	<hr>
 	<table>
@@ -72,6 +102,9 @@
 		<tr>
 			<td>${obj.id}</td>
 			<td>${obj.name}</td>
+			<td>${obj.mail}</td>
+			<td>${obj.age}</td>
+			<td>${obj.memo}</td>
 		</tr>
 	</c:forEach>
 	</table>

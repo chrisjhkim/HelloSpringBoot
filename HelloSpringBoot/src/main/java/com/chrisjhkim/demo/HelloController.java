@@ -9,6 +9,7 @@ import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
@@ -34,20 +35,26 @@ public class HelloController {
 	//@Autowired
 	MyDataDaoImp dao;
 	
+	@Autowired
+	MyDataBean myDataBean;
+	
+	@Autowired
+	private MyDataService service;
+	
 	@RequestMapping(value="/", method=RequestMethod.GET)
 	public ModelAndView index(
-			@ModelAttribute("formModel") MyData myData
-			,ModelAndView mav) {
-		System.out.println("/ GET " + myData);
-		mav.setViewName("index");
-		mav.addObject("formModel", myData);
-//		Iterable<MyData> list = repository.findAll();
-		System.out.println(dao==null ? "dao null " : "dao not null " );
-		System.out.println(dao.getClass());
-		Iterable<MyData> list = dao.getAll();
+//			@ModelAttribute("formModel") MyData myData
+			ModelAndView mav) {
+		System.out.println("-/ GET-------------------------------");
 
+		mav.setViewName("index");
+		mav.addObject("title", "Find Page");
+		mav.addObject("msg", "MyData의 예제입니다.");
+		List<MyData> list = service.getAll();
+		//Iterable<MyData> list = dao.getAll();
+//		Iterable<MyData> list = repository.findAll();
 		mav.addObject("datalist", list);
-		System.out.println();
+		System.out.println("----------------------------------------");
 		return mav;
 	}
 	
@@ -58,8 +65,8 @@ public class HelloController {
 			@Validated MyData myData
 			,BindingResult result
 			,ModelAndView mav) {
-		System.out.println("/ POST ");
-		System.out.println("ModelAttribute = "+myData);
+		System.out.println("/ - POST ");
+		System.out.println("ModelAttribute formModel = "+myData==null?"null":myData);
 		
 		ModelAndView res = null;
 		if( !result.hasErrors() ) {
@@ -93,21 +100,63 @@ public class HelloController {
 		return res;
 	}
 	
+	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
+	public ModelAndView indexById(
+			@PathVariable long id
+			,ModelAndView mav) {
+		System.out.println("/{id} - GET");
+		
+		mav.setViewName("pickup");
+		mav.addObject("title", "Pickup Page");
+		System.out.println("@1");
+		String table = "<table>" + myDataBean.getTableTagById(id) +"</table>";
+		System.out.println("@2");
+		mav.addObject("msg", "pickup data id = "+id);
+		mav.addObject("data", table);
+
+		System.out.println();
+		return mav;
+	}
+	
+	@RequestMapping(value= "/page/{num}" , method=RequestMethod.GET)
+	public ModelAndView page(
+			@PathVariable Integer num
+			,ModelAndView mav) {
+		System.out.println("/page/{num} - GET");
+		
+		Page<MyData> page = service.getMyDataInPage(num);
+		
+		mav.setViewName("index");
+		mav.addObject("title"	,"Find Page");
+		mav.addObject("msg"		,"MyData의 예제입니다");
+		mav.addObject("pagenumber",num);
+//		mav.addObject("datalist",page);
+		mav.addObject("datalist",page.toList());
+		
+		System.out.println();
+		return mav;
+	}
+	
+	
 	@RequestMapping(value="/find", method=RequestMethod.GET)
 	public ModelAndView find(ModelAndView mav) {
 		System.out.println("/find - GET");
+		
 		mav.setViewName("find");
 		mav.addObject("title"	,"Find Page");
 		mav.addObject("msg"		,"MyData의 예제입니다");
 		mav.addObject("value"	,"");
-		Iterable<MyData> list = dao.getAll();
+//		Iterable<MyData> list = dao.getAll();
+		List<MyData> list = service.getAll();
 		mav.addObject("datalist", list);
+		
 		System.out.println();
 		return mav;
 	}
 	@RequestMapping(value="/find", method=RequestMethod.POST)
 	public ModelAndView find(ModelAndView mav, HttpServletRequest req) {
 		System.out.println("/find - POST");
+		
 		mav.setViewName("find");
 		String param = req.getParameter("fstr");
 		if( param == null ) {
@@ -116,7 +165,8 @@ public class HelloController {
 			mav.addObject("title"	,"Find Result");
 			mav.addObject("msg"		,param+"의 검색결과");
 			mav.addObject("value"	,param);
-			List<MyData> list = dao.find(param);
+//			List<MyData> list = dao.find(param);
+			List<MyData> list = service.find(param);
 			System.out.println(list);
 			mav.addObject("datalist", list);
 		}

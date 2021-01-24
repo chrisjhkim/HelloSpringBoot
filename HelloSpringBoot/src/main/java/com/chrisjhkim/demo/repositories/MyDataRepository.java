@@ -27,4 +27,6 @@ public interface MyDataRepository extends JpaRepository<MyData, Long>{
 
 	@Query("SELECT d FROM MyData d ORDER BY d.name")		// d는 Mydata의 alias 
 	List<MyData> findAllOrderByName();
+	
+	//public Optional<MyData> findOne(Long id);		// 안됨 왜지 
 }

@@ -9,7 +9,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class HelloSpringBootApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(HelloSpringBootApplication.class, args);
+		SpringApplication.run(
+				HelloSpringBootApplication.class
+//				, args
+				, new String[] {"15"}
+				);
 	}
 
 	@PostConstruct
